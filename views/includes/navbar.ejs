@@ -1,55 +1,83 @@
-<style>
-/* ================= MOBILE ================= */
-@media (max-width:768px){
+<div class="container-fluid">
+  <nav class="navbar navbar-expand-md bg-white sticky-top border-bottom">
+      <div class="container-fluid position-relative">
 
-  .search-box input{
-    width: 120px !important;   /* chhota width */
-    font-size: 12px !important;
-    padding: 6px 10px !important;
-  }
+          <!-- Logo -->
+          <a class="navbar-brand" href="/listing">
+             <i class="fa-solid fa-compass "></i>
+          </a>
 
-  .search-box button{
-    padding: 6px 10px !important;
-    font-size: 12px !important;
-  }
+          <!-- Mobile Search Center -->
+          <div class="mobile-search d-md-none">
+              <form action="/listing" method="GET" class="d-flex">
+                  <input
+                      class="form-control rounded-pill"
+                      type="search"
+                      name="search"
+                      placeholder="Search"
+                  >
+              </form>
+          </div>
 
-}
-</style>
-<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="/listing"><i class="fa-solid fa-compass"></i></a>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNavAltMarkup"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-      <div class="navbar-nav">
-        <a class="nav-link" href="/listing">Explore</a>
+          <!-- Hamburger -->
+          <button
+              class="navbar-toggler"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#navbarNav"
+          >
+              <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarNav">
+
+              <!-- Desktop Search -->
+              <form 
+                  class="d-flex mx-auto d-none d-md-flex"
+                  action="/listing"
+                  method="GET"
+              >
+                  <input
+                      class="form-control rounded-pill"
+                      name="search"
+                      type="search"
+                      placeholder="Search destination"
+                  >
+                  <button class="btn btn-danger rounded-pill ms-2" type="search">
+                      Search
+                  </button>
+              </form>
+
+              <div class="navbar-nav ms-auto mobile-menu">
+
+                  <a class="nav-link btn btn-outline-primary rounded-pill  " href="/listing/new">
+                      Create Post
+                  </a>
+
+                  <% if(currUser){ %>
+                     
+                    <a  class="nav-link  my-bookings-link " href="/bookings/my-bookings">
+                               My Bookings
+                    </a>
+
+                      <a class="btn btn-outline-danger rounded-pill"
+                      href="/logout">
+                          Logout
+                      </a>
+
+                  <% } else { %>
+
+                      <a class="nav-link" href="/signup">
+                          Sign up
+                      </a>
+
+                      <a class="nav-link" href="/login">
+                          Login
+                      </a>
+
+                  <% } %>
+              </div>
+          </div>
       </div>
-     <div class="navbar-nav ms-auto">
-    <form class="d-flex search-box " role="search">
-      <input class="form-control me-2 rounded-5 " type="search" placeholder="Search destination" aria-label="Search" style="padding: 0.5rem 3rem 0.5rem 3rem; font-size: 1.2rem;"/>
-      <button class="btn  text-white bg-danger btnSearch rounded-5 " type="submit"><i class="fa-solid fa-magnifying-glass d-inline m-1 "></i>Search</button>
-    </form>
-  
-     </div>
-
-
-      <div class="navbar-nav ms-auto">
-         <a class="nav-link" href="/listing/new">Airbnb your home</a>
-        <% if(!currUser) { %>
-        <a class="nav-link " href="/signup"><b>Sign up</b></a>
-        <a class="nav-link" href="/login"><b>Log in</b></a>
-        <% } %>
-        
-         <% if(currUser) { %>
-        <a class="nav-link" href="/logout">Log Out</a>
-         <% } %>
-      </div>
-    </div>
+  </nav>
   </div>
-</nav>

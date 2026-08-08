@@ -155,17 +155,46 @@
   <img src="<%= listing.image.url %>" class="card-img-top" alt="listing_image"style="height: 20rem";>
   <div class="card-img-overlay">
   </div>
-  <div class="card-body new">
-    <h5 class="card-title"> <%= listing.title %> </h5>
-    <p class="card-text">  &#8377; <%= listing.price.toLocaleString("en-IN") %>/night  <i class="m-3 text-danger gst"> +18% GST</i> </p>
-    <a href="#" class="btn btn-primary">View Details</a>
-  </div>
-  </a> 
+ 
+   <div class="card-body new">
+
+    <h5 class="card-title">
+        <%= listing.title %>
+    </h5>
+
+    <p class="card-text">
+
+        <span
+            class="listing-price"
+            data-price="<%= listing.price %>"
+        >
+            &#8377;
+            <%= listing.price.toLocaleString("en-IN") %>
+        </span>
+
+        /night
+
+        <i class="m-3 text-danger gst" style="display: none;">
+    +18% GST
+          </i>
+
+    </p>
+
+    <a
+        href="/listing/<%= listing._id %>"
+        class="btn btn-primary"
+    >
+        View Details
+    </a>
+
+</div>
+
+</a> 
 </div>
 
 <% } %>
 </div>
-    <script>
+    <!-- <script>
       let taxSwitch = document.getElementById("switchCheckDefault");
       taxSwitch.addEventListener("click",() =>{
         let taxInfo = document.getElementsByClassName("gst");
@@ -180,6 +209,53 @@ info.style.display = "none"
         
         
       })
-    </script>
+    </script> -->
 
+    <script>
+    let taxSwitch = document.getElementById("switchCheckDefault");
+
+    taxSwitch.addEventListener("click", () => {
+
+        let taxInfo = document.getElementsByClassName("gst");
+        let prices = document.getElementsByClassName("listing-price");
+
+        for (let i = 0; i < taxInfo.length; i++) {
+
+            if (taxSwitch.checked) {
+
+                // GST text show
+                taxInfo[i].style.display = "inline";
+
+                // Original price
+                let originalPrice = Number(
+                    prices[i].getAttribute("data-price")
+                );
+
+                // 18% GST
+                let gst = originalPrice * 0.18;
+
+                // Price + GST
+                let totalPrice = originalPrice + gst;
+
+                prices[i].innerHTML =
+                    "&#8377;" +
+                    Math.round(totalPrice).toLocaleString("en-IN");
+
+            } else {
+
+                // GST text hide
+                taxInfo[i].style.display = "none";
+
+                // Original price
+                let originalPrice = Number(
+                    prices[i].getAttribute("data-price")
+                );
+
+                prices[i].innerHTML =
+                    "&#8377;" +
+                    originalPrice.toLocaleString("en-IN");
+            }
+        }
+    });
+</script>
 </body>

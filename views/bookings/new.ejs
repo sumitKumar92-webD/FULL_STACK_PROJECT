@@ -1,0 +1,159 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7 col-md-9">
+      <div class="card shadow border-0 rounded-4 overflow-hidden">
+        <img
+          src="<%= listing.image.url %>"
+          class="card-img-top"
+          style="height: 300px; object-fit: cover"
+          alt="<%= listing.title %>"
+        />
+
+        <div class="card-body p-4">
+          <h2 class="fw-bold"><%= listing.title %></h2>
+
+          <p class="text-muted">
+            <%= listing.location %>, <%= listing.country %>
+          </p>
+
+          <h4 class="mb-4">
+            ₹<%= listing.price.toLocaleString("en-IN") %>
+            <small class="text-secondary"> / night </small>
+          </h4>
+
+          <form action="/bookings/<%= listing._id %>/book" method="POST">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold"> Check-in </label>
+
+                <input
+                  type="date"
+                  id="checkIn"
+                  name="checkIn"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold"> Check-out </label>
+
+                <input
+                  type="date"
+                  id="checkOut"
+                  name="checkOut"
+                  class="form-control"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-semibold"> Guests </label>
+
+              <input
+                type="number"
+                name="guests"
+                class="form-control"
+                min="2"
+                value="2"
+                readonly
+                required
+              />
+            </div>
+
+            <!-- Price Details -->
+
+            <div class="bg-light rounded-4 p-4 mb-4">
+              <h5 class="fw-bold mb-3">Price Details</h5>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span> Price per night </span>
+
+                <span> ₹<%= listing.price.toLocaleString("en-IN") %> </span>
+              </div>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span> Nights </span>
+
+                <span id="numberOfNights"> - </span>
+              </div>
+
+              <div class="d-flex justify-content-between mb-2">
+                <span> GST </span>
+
+                <span class="text-danger"> 18% </span>
+              </div>
+
+              <hr />
+
+              <div class="d-flex justify-content-between">
+                <h5 class="fw-bold">Total Amount</h5>
+
+                <h5 class="fw-bold text-primary" id="totalPrice">
+                  Select dates
+                </h5>
+              </div>
+            </div>
+
+            <button class="btn btn-danger w-100 rounded-3">
+              Confirm Booking
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const checkIn = document.getElementById("checkIn");
+
+  const checkOut = document.getElementById("checkOut");
+
+  const totalPrice = document.getElementById("totalPrice");
+
+  const numberOfNights = document.getElementById("numberOfNights");
+
+  const pricePerNight = Number("<%= listing.price %>");
+
+  function calculateTotal() {
+    if (!checkIn.value || !checkOut.value) {
+      totalPrice.innerText = "Select dates";
+      numberOfNights.innerText = "-";
+
+      return;
+    }
+
+    const start = new Date(checkIn.value);
+
+    const end = new Date(checkOut.value);
+
+    const difference = end - start;
+
+    const days = difference / (1000 * 60 * 60 * 24);
+
+    if (days <= 0) {
+      totalPrice.innerText = "Invalid dates";
+      numberOfNights.innerText = "-";
+
+      return;
+    }
+
+    numberOfNights.innerText = days;
+
+    const basePrice = days * pricePerNight;
+
+    const gst = basePrice * 0.18;
+
+    const finalPrice = basePrice + gst;
+
+    totalPrice.innerText = "₹" + Math.round(finalPrice).toLocaleString("en-IN");
+  }
+
+  checkIn.addEventListener("change", calculateTotal);
+
+  checkOut.addEventListener("change", calculateTotal);
+</script>

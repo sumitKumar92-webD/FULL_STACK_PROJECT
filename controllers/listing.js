@@ -1,9 +1,74 @@
 const Listing = require("../models/listing.js");
 const axios = require("axios"); //new
+
 module.exports.index = async (req, res) => {
-    const allListings = await Listing.find({});
-    res.render("listing/index.ejs", { allListings });
-  };
+    const { search } = req.query;
+    let allListings = [];
+    if (search && search.trim() !== "") {
+        const searchText = search.trim();
+        // 1. Exact matching listings
+        const exactListings = await Listing.find({
+            $or: [
+                {
+                    title: {
+                        $regex: searchText,
+                        $options: "i"
+                    }
+                },
+                {
+                    location: {
+                        $regex: searchText,
+                        $options: "i"
+                    }
+                },
+                {
+                    country: {
+                        $regex: searchText,
+                        $options: "i"
+                    }
+                }
+            ]
+        });
+
+        // 2. Other listings
+        const otherListings = await Listing.find({
+            $nor: [
+                {
+                    title: {
+                        $regex: searchText,
+                        $options: "i"
+                    }
+                },
+                {
+                    location: {
+                        $regex: searchText,
+                        $options: "i"
+                    }
+                },
+                {
+                    country: {
+                        $regex: searchText,
+                        $options: "i"
+                    }
+                }
+            ]
+        }).limit(12);
+
+        // Exact results first + other listings after
+        allListings = [
+            ...exactListings,
+            ...otherListings
+        ];
+
+    } else {
+        allListings = await Listing.find({});
+    }
+
+    res.render("listing/index.ejs", {
+        allListings,
+        search
+    });
+};
 
 module.exports.renderNewForm = (req, res) => {
   res.render("listing/new.ejs");
@@ -34,7 +99,7 @@ module.exports.showListing = async (req, res) => {
 });
   };
 
-   module.exports.createListing =async (req, res) => {
+module.exports.createListing =async (req, res) => {
     if (!req.file) {
         req.flash("error", "Image is required!");
         return res.redirect("/listing/new");
@@ -83,7 +148,7 @@ module.exports.editListing = async (req, res) => {
     res.render("listing/edit.ejs", { listing,originalImageUrl });
   };
 
-  module.exports.updateListing = async (req, res) => {
+module.exports.updateListing = async (req, res) => {
     
       let { id } = req.params;
     let listing =   await Listing.findByIdAndUpdate(id, { ...req.body.listing });

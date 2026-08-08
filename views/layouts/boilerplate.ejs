@@ -17,6 +17,8 @@
 </head>
 <body>
     <%- include("../includes/navbar.ejs") %>
+    <div class="menu-overlay"></div>  
+    <!-- new -->
     <div class="container">
               <%- include("../includes/flash.ejs") %>
         <%- body %>
@@ -27,7 +29,22 @@
     <script src="/js/script.js"></script>
     <script src="/js/script.js"></script>
 
-    
+    <script>
+
+let menu = document.getElementById("navbarNav");
+let overlay = document.querySelector(".menu-overlay");
+
+
+menu.addEventListener("shown.bs.collapse",()=>{
+    overlay.style.display = "block";
+});
+
+
+menu.addEventListener("hidden.bs.collapse",()=>{
+    overlay.style.display = "none";
+});
+
+</script>
 </body>
   </body>
 </body>

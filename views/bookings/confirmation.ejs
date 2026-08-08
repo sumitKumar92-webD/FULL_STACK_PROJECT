@@ -1,0 +1,175 @@
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+    <div class="card shadow border-0 rounded-4 overflow-hidden">
+        <!-- Success Section -->
+        <div class="bg-success-subtle text-center p-4">
+            <div 
+                class="bg-success text-white rounded-circle mx-auto d-flex align-items-center justify-content-center"
+                style="width:70px;height:70px;font-size:35px;"
+            >
+                ✓
+            </div>
+            <h1 class="fw-bold text-success mt-3">
+                Booking Confirmed!
+            </h1>
+
+            <p class="text-secondary">
+                Your stay has been successfully booked.
+            </p>
+
+        </div>
+
+        <!-- Booking Content -->
+        <div class="p-4">
+            <div class="row g-4">
+                <!-- Listing Details -->
+                <div class="col-md-5">
+                    <% if(booking.listing.image && booking.listing.image.url) { %>
+                        <img
+                            src="<%= booking.listing.image.url %>"
+                            class="img-fluid rounded-4"
+                            style="height:280px;width:100%;object-fit:cover;"
+                            alt="<%= booking.listing.title %>"
+                        >
+                    <% } %>
+                    <h3 class="fw-bold mt-3">
+                        <%= booking.listing.title %>
+                    </h3>
+                    <p class="text-secondary">
+                        📍 <%= booking.listing.location %>,
+                        <%= booking.listing.country %>
+                    </p>
+                </div>
+
+                <!-- Booking Details -->
+                <div class="col-md-7">
+                    <div class="bg-light rounded-4 p-4">
+                        <div class="mb-3">
+                            <small class="text-secondary">
+                                Check-in
+                            </small>
+
+                            <h6 class="fw-semibold">
+                                <%= new Date(booking.checkIn).toLocaleDateString(
+                                    "en-IN",
+                                    {
+                                        day:"numeric",
+                                        month:"long",
+                                        year:"numeric"
+                                    }
+                                ) %>
+                            </h6>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-secondary">
+                                Check-out
+                            </small>
+                            <h6 class="fw-semibold">
+                                <%= new Date(booking.checkOut).toLocaleDateString(
+                                    "en-IN",
+                                    {
+                                        day:"numeric",
+                                        month:"long",
+                                        year:"numeric"
+                                    }
+                                ) %>
+                            </h6>
+                        </div>
+
+                        <div class="mb-3">
+                            <small class="text-secondary">
+                                Guests
+                            </small>
+                            <h6 class="fw-semibold">
+                                <%= booking.guests %>
+                                <%= booking.guests == 1 ? "Guest" : "Guests" %>
+                            </h6>
+                        </div>
+
+                        <div>
+                            <small class="text-secondary">
+                                Booking Status
+                            </small>
+                            <h6>
+                                <span class="badge bg-success">
+                                    <%= booking.status %>
+                                </span>
+                            </h6>
+                        </div>
+                    </div>
+
+                    <!-- Payment Details -->
+                    <div class="bg-primary-subtle border border-primary-subtle rounded-4 p-4 mt-4">
+
+                        <h5 class="fw-bold text-primary mb-3">
+                            Payment Details
+                        </h5>
+
+                        <div class="d-flex justify-content-between mb-2">
+
+                            <span class="text-secondary">
+                                Stay Price
+                            </span>
+
+                            <span class="fw-semibold">
+                                ₹<%= 
+                                (booking.totalPrice - booking.gst)
+                                .toLocaleString("en-IN") 
+                                %>
+                            </span>
+                        </div>
+
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-secondary">
+                                GST (18%)
+                            </span>
+                            <span class="fw-semibold text-danger">
+                                ₹<%= booking.gst.toLocaleString("en-IN") %>
+                            </span>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <small class="text-primary fw-semibold">
+                                    Total Amount
+                                </small>
+                                <div class="fw-semibold text-dark">
+                                    Including taxes
+                                </div>
+                            </div>
+
+                            <div class="fs-4 fw-bold text-primary">
+                                ₹<%= booking.totalPrice.toLocaleString("en-IN") %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Buttons -->
+
+            <div class="d-flex gap-3 justify-content-center mt-5">
+                <a
+                    href="/listing/<%= booking.listing._id %>"
+                    class="btn btn-dark px-4"
+                >
+                    View Listing
+                </a>
+
+                <a
+                    href="/listing"
+                    class="btn btn-outline-dark px-4"
+                >
+                    Explore More Places
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
