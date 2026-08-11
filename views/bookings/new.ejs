@@ -110,50 +110,84 @@
 
 <script>
   const checkIn = document.getElementById("checkIn");
-
   const checkOut = document.getElementById("checkOut");
 
-  const totalPrice = document.getElementById("totalPrice");
+  const nightsElement = document.getElementById("numberOfNights");
 
-  const numberOfNights = document.getElementById("numberOfNights");
+  const totalPriceElement = document.getElementById("totalPrice");
 
+  // Today's date
+  const today = new Date();
+
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  const todayString = `${year}-${month}-${day}`;
+
+  // Past dates disabled
+  checkIn.min = todayString;
+  checkOut.min = todayString;
+
+  // Listing price
   const pricePerNight = Number("<%= listing.price %>");
 
-  function calculateTotal() {
-    if (!checkIn.value || !checkOut.value) {
-      totalPrice.innerText = "Select dates";
-      numberOfNights.innerText = "-";
+  // Check-in change
+  checkIn.addEventListener("change", function () {
+    // Checkout cannot be before check-in
+    checkOut.min = this.value;
 
+    if (checkOut.value && checkOut.value <= this.value) {
+      checkOut.value = "";
+    }
+
+    calculatePrice();
+  });
+
+  // Check-out change
+  checkOut.addEventListener("change", function () {
+    calculatePrice();
+  });
+
+  // Calculate price
+  function calculatePrice() {
+    if (!checkIn.value || !checkOut.value) {
+      nightsElement.innerText = "-";
+      totalPriceElement.innerText = "Select dates";
       return;
     }
 
     const start = new Date(checkIn.value);
-
     const end = new Date(checkOut.value);
 
     const difference = end - start;
 
-    const days = difference / (1000 * 60 * 60 * 24);
+    const nights = difference / (1000 * 60 * 60 * 24);
 
-    if (days <= 0) {
-      totalPrice.innerText = "Invalid dates";
-      numberOfNights.innerText = "-";
-
+    // Invalid dates
+    if (nights <= 0) {
+      nightsElement.innerText = "-";
+      totalPriceElement.innerText = "Invalid dates";
       return;
     }
 
-    numberOfNights.innerText = days;
+    // Base price
+    const basePrice = nights * pricePerNight;
 
-    const basePrice = days * pricePerNight;
-
+    // 18% GST
     const gst = basePrice * 0.18;
 
-    const finalPrice = basePrice + gst;
+    // Total price
+    const totalPrice = basePrice + gst;
 
-    totalPrice.innerText = "₹" + Math.round(finalPrice).toLocaleString("en-IN");
+    // Show nights
+    nightsElement.innerText = nights;
+
+    // Show total
+    totalPriceElement.innerText =
+      "₹" +
+      totalPrice.toLocaleString("en-IN", {
+        maximumFractionDigits: 0,
+      });
   }
-
-  checkIn.addEventListener("change", calculateTotal);
-
-  checkOut.addEventListener("change", calculateTotal);
 </script>
