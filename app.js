@@ -43,6 +43,17 @@ app.use(express.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
 app.engine('ejs', ejsMate);
 app.use(express.static(path.join(__dirname, "public")));
+  
+
+//render sol
+
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "OK",
+        message: "Wanderlust backend is running",
+    });
+});
+
 
   const store = MongoStore.create({
          mongoUrl: dbUrl,
