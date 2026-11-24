@@ -1,0 +1,204 @@
+
+<% layout("/layouts/boilerplate") %>
+
+<div class="container mt-5 mb-5">
+
+    <div
+        class="card shadow border-0 rounded-4 mx-auto"
+        style="max-width: 550px;"
+    >
+
+        <div class="card-body p-4 text-center">
+
+            <div class="mb-3">
+                <i class="fa-solid fa-lock text-success fa-3x"></i>
+            </div>
+
+            <h2 class="fw-bold mb-3">
+                Complete Your Payment
+            </h2>
+
+            <p class="text-muted">
+                Your booking is waiting for payment.
+            </p>
+
+            <hr>
+
+            <h5>Booking Amount</h5>
+
+            <h2 class="text-primary fw-bold">
+                ₹<%= Number(booking.totalPrice).toLocaleString("en-IN") %>
+            </h2>
+
+            <p class="text-muted small">
+                Secure payment powered by Razorpay
+            </p>
+
+            <button
+                id="payButton"
+                class="btn btn-danger w-100 mt-4 rounded-3 py-2"
+                type="button"
+            >
+                <i class="fa-solid fa-credit-card me-2"></i>
+                Pay Now
+            </button>
+
+            <p class="text-muted small mt-3 mb-0">
+                Please do not refresh the page during payment.
+            </p>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Razorpay data -->
+<div
+    id="paymentData"
+    data-key="<%= key %>"
+    data-amount="<%= order.amount %>"
+    data-currency="<%= order.currency %>"
+    data-order-id="<%= order.id %>"
+    data-booking-id="<%= booking._id %>"
+    hidden
+></div>
+
+
+<!-- Razorpay Checkout -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const paymentData = document.getElementById("paymentData");
+
+    const payButton = document.getElementById("payButton");
+
+    const key = paymentData.dataset.key;
+    const amount = Number(paymentData.dataset.amount);
+    const currency = paymentData.dataset.currency;
+    const orderId = paymentData.dataset.orderId;
+    const bookingId = paymentData.dataset.bookingId;
+
+    payButton.addEventListener("click", function () {
+
+        if (typeof Razorpay === "undefined") {
+            alert("Razorpay checkout failed to load. Please refresh.");
+            return;
+        }
+
+        if (!key || !amount || !orderId || !bookingId) {
+            alert("Payment details are missing. Please try again.");
+            return;
+        }
+
+        const options = {
+
+            key: key,
+
+            amount: amount,
+
+            currency: currency,
+
+            name: "WanderLust",
+
+            description: "Booking Payment",
+
+            order_id: orderId,
+
+            handler: async function (response) {
+
+                payButton.disabled = true;
+                payButton.innerText = "Verifying Payment...";
+
+                try {
+
+                    const result = await fetch(
+                        "/bookings/verify-payment",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                bookingId: bookingId,
+
+                                razorpay_payment_id:
+                                    response.razorpay_payment_id,
+
+                                razorpay_order_id:
+                                    response.razorpay_order_id,
+
+                                razorpay_signature:
+                                    response.razorpay_signature
+
+                            })
+                        }
+                    );
+
+                    const data = await result.json();
+
+                    if (
+                        result.ok &&
+                        data.success &&
+                        data.redirectUrl
+                    ) {
+
+                        window.location.href = data.redirectUrl;
+
+                    } else {
+
+                        alert(
+                            data.message ||
+                            "Payment verification failed."
+                        );
+
+                        payButton.disabled = false;
+                        payButton.innerText = "Pay Now";
+                    }
+
+                } catch (error) {
+
+                    console.error("Payment verification error:", error);
+
+                    alert(
+                        "Unable to verify payment. Please try again."
+                    );
+
+                    payButton.disabled = false;
+                    payButton.innerText = "Pay Now";
+                }
+            },
+
+            theme: {
+                color: "#fe424d"
+            },
+
+            modal: {
+                ondismiss: function () {
+                    console.log("Payment window closed.");
+                }
+            }
+        };
+
+        const razorpayInstance = new Razorpay(options);
+
+        razorpayInstance.on("payment.failed", function (response) {
+
+            alert(
+                response.error.description ||
+                "Payment failed. Please try again."
+            );
+
+        });
+
+        razorpayInstance.open();
+
+    });
+
+});
+</script>
