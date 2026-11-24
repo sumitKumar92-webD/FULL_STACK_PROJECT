@@ -1,83 +1,87 @@
+
 <div class="container-fluid">
-  <nav class="navbar navbar-expand-md bg-white sticky-top border-bottom">
-      <div class="container-fluid position-relative">
+    <nav class="navbar navbar-expand-md bg-white sticky-top border-bottom">
+        <div class="container-fluid position-relative">
 
-          <!-- Logo -->
-          <a class="navbar-brand" href="/listing">
-             <i class="fa-solid fa-compass "></i>
-          </a>
+            <!-- Logo -->
+            <a class="navbar-brand" href="/listing">
+                <i class="fa-solid fa-compass"></i>
+            </a>
 
-          <!-- Mobile Search Center -->
-          <div class="mobile-search d-md-none">
-              <form action="/listing" method="GET" class="d-flex">
-                  <input
-                      class="form-control rounded-pill"
-                      type="search"
-                      name="search"
-                      placeholder="Search"
-                  >
-              </form>
-          </div>
+            <!-- Mobile Search Center -->
+            <div class="mobile-search d-md-none">
+                <form action="/listing" method="GET" class="d-flex">
+                    <input
+                        class="form-control rounded-pill"
+                        type="search"
+                        name="search"
+                        placeholder="Search"
+                    >
+                </form>
+            </div>
 
-          <!-- Hamburger -->
-          <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#navbarNav"
-          >
-              <span class="navbar-toggler-icon"></span>
-          </button>
+            <!-- Hamburger -->
+            <button
+                class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarNav"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-          <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="collapse navbar-collapse" id="navbarNav">
 
-              <!-- Desktop Search -->
-              <form 
-                  class="d-flex mx-auto d-none d-md-flex"
-                  action="/listing"
-                  method="GET"
-              >
-                  <input
-                      class="form-control rounded-pill"
-                      name="search"
-                      type="search"
-                      placeholder="Search destination"
-                  >
-                  <button class="btn btn-danger rounded-pill ms-2" type="search">
-                      Search
-                  </button>
-              </form>
+                <!-- Desktop Search -->
+                <form
+                    class="d-flex mx-auto d-none d-md-flex"
+                    action="/listing"
+                    method="GET"
+                >
+                    <input
+                        class="form-control rounded-pill"
+                        name="search"
+                        type="search"
+                        placeholder="Search destination"
+                    >
+                    <button class="btn btn-danger rounded-pill ms-2" type="submit">
+                        Search
+                    </button>
+                </form>
 
-              <div class="navbar-nav ms-auto mobile-menu">
+                <div class="navbar-nav ms-auto mobile-menu">
 
-                  <a class="nav-link btn btn-outline-primary rounded-pill  " href="/listing/new">
-                      Create Post
-                  </a>
-
-                  <% if(currUser){ %>
-                     
-                    <a  class="nav-link  my-bookings-link " href="/bookings/my-bookings">
-                               My Bookings
+                    <a class="nav-link btn btn-outline-primary rounded-pill"
+                       href="/listing/new">
+                        Create Post
                     </a>
 
-                      <a class="btn btn-outline-danger rounded-pill"
-                      href="/logout">
-                          Logout
-                      </a>
+                    <% if (typeof currUser !== 'undefined' && currUser) { %>
 
-                  <% } else { %>
+                        <a class="nav-link my-bookings-link"
+                           href="/bookings/my-bookings">
+                            My Bookings
+                        </a>
 
-                      <a class="nav-link" href="/signup">
-                          Sign up
-                      </a>
+                        <a class="btn btn-outline-danger rounded-pill"
+                           href="/logout">
+                            Logout
+                        </a>
 
-                      <a class="nav-link" href="/login">
-                          Login
-                      </a>
+                    <% } else { %>
 
-                  <% } %>
-              </div>
-          </div>
-      </div>
-  </nav>
-  </div>
+                        <a class="nav-link" href="/signup">
+                            Sign up
+                        </a>
+
+                        <a class="nav-link" href="/login">
+                            Login
+                        </a>
+
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+    </nav>
+</div>
