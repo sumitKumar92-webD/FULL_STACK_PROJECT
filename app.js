@@ -152,11 +152,11 @@ const dbUrl = process.env.ATLASDB_URL;
 const sessionSecret = process.env.SECRET;
 
 if (!dbUrl) {
-    throw new Error("ATLASDB_URL missing in .env file");
+    throw new Error("ATLASDB_URL missing in environment variables");
 }
 
 if (!sessionSecret) {
-    throw new Error("SECRET missing in .env file");
+    throw new Error("SECRET missing in environment variables");
 }
 
 // 4. View Engine
@@ -164,12 +164,10 @@ app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// 5. Middlewares
+// 5. Basic Middlewares
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
 app.use(methodOverride("_method"));
-
 app.use(express.static(path.join(__dirname, "public")));
 
 // 6. MongoDB Session Store
@@ -199,7 +197,7 @@ const sessionOption = {
 
 app.use(session(sessionOption));
 
-// 8. Flash
+// 8. Flash Middleware
 app.use(flash());
 
 // 9. Passport Configuration
@@ -211,15 +209,7 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// 10. Local Variables
-// app.use((req, res, next) => {
-//     res.locals.success = req.flash("success");
-//     res.locals.error = req.flash("error");
-//     res.locals.currUser = req.user;
-//     next();
-// });
-
-// 10. Local Variables
+// 10. Global Local Variables
 app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
@@ -241,12 +231,12 @@ app.use("/listing/:id/reviews", reviewRouter);
 app.use("/bookings", bookingRouter);
 app.use("/", userRouter);
 
-// 13. 404 Error
+// 13. 404 Error Handler
 app.use((req, res, next) => {
     next(new ExpressError(404, "Page not found!"));
 });
 
-// 14. Error Handler
+// 14. Global Error Handler
 app.use((err, req, res, next) => {
     const {
         statusCode = 500,
@@ -276,5 +266,3 @@ async function startServer() {
 }
 
 startServer();
-
-
